@@ -8,7 +8,10 @@ VERIFY_TOKEN = '@thaonguyen'
 FB_API_URL = 'https://graph.facebook.com/v5.0/me/messages'
 PAGE_ACCESS_TOKEN = 'EAAVJSnewzxkBAEPvZArsPw3Y7R2WvocuukAnpHTiNZBdywPIO4JESkeraVJz1c8vXgu1ZCtxTlbtZCZAsMpZBZBTiSB4YYUzwVfmsU4QTdX1ZBJBNrCwxvXktrOSd93jxtKj147U6XjysbOFDsklgVNWEMrLUydelJ28chC1K2yPVpXlrrkZA9RKO8JTeUTlUtyAZD'
 
-
+count=0
+checkmk=False
+tk=''
+mk=''
 def send_message(recipient_id, text):
     """Send a response to Facebook"""
     params = {
@@ -64,21 +67,35 @@ def verify():
 
 @app.route('/', methods=['POST'])
 def webhook():
+    global count,tk,mk
     data = request.get_json()
-    print(showmess(data))
-
-    if showmess(data)=='tkb':
-        
-        try:
-            thongtin= chatbot.xulyngay()
-            send_message(id_replace(data),thongtin)
-            send_message(id_replace(data),chatbot.datenow())
-        except:
-            send_message(id_replace(data),"sai trong qua trinh lay du lieu")
-    else:
-        print(send_message(id_replace(data),'sai cú pháp'))
+    try:
+        if showmess(data)=='tkb':
+            send_message(id_replace(data),"Đang xử lý"+"Buoc:"+str(count+1))
+            send_message(id_replace(data),"moi nhap mssv: ")
+            count=1
+        elif (showmess(data)).isdigit() and count==1:
+            send_message(id_replace(data),"Đang xử lý"+"Buoc:"+str(count+1))
+            send_message(id_replace(data),"moi nhap mat khau")   
+            tk=showmess(data)
+            count=0
+        elif count!=1 :
+            mk=showmess(data)      
+            if tk!='' and mk!='':
+                mk=showmess(data)
+                send_message(id_replace(data),"Đang xử lý")
+                try:    
+                    send_message(id_replace(data),chatbot.xulyngay(tk,mk))
+                    count=0;tk='';mk=''
+                except :
+                    send_message(id_replace(data),"lỗi trong quá trình lấy thời khóa biểu")
+                    count=0;tk='';mk=''
+            
+    except Exception as e:
+        send_message(id_replace(data),"loi nguyen trong")
+        print(e)
     return data
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
