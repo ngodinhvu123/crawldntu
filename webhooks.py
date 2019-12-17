@@ -2,10 +2,11 @@ from flask import Flask, request
 import json
 import requests
 import chatbot
+import os
 app = Flask(__name__)
 VERIFY_TOKEN = '@thaonguyen'
 FB_API_URL = 'https://graph.facebook.com/v5.0/me/messages'
-PAGE_ACCESS_TOKEN = 'EAAVJSnewzxkBANcGJI7vkRHMR4N6ZCCbRWiqHU9SFRlTNNouIZCv9yP2rR4xHl5MVmJZBjlgN2MRqnpZCXjdHZAsJkLEujyAOdSGJhqo3vYQ5vy1NXRMevbgURB6ZCZCuuJtIXsSAEA24xkmyCAGTFknUY76BP6MVOb6vb9Aj7Yj5eKQbRW7phpvnv83eaXJY8ZD'
+PAGE_ACCESS_TOKEN = 'EAAVJSnewzxkBAEPvZArsPw3Y7R2WvocuukAnpHTiNZBdywPIO4JESkeraVJz1c8vXgu1ZCtxTlbtZCZAsMpZBZBTiSB4YYUzwVfmsU4QTdX1ZBJBNrCwxvXktrOSd93jxtKj147U6XjysbOFDsklgVNWEMrLUydelJ28chC1K2yPVpXlrrkZA9RKO8JTeUTlUtyAZD'
 
 
 def send_message(recipient_id, text):
@@ -29,14 +30,26 @@ def send_message(recipient_id, text):
 
 
 def showmess(data):
-    messaging = ((data["entry"][0]["messaging"]))
-    return(messaging[0]["message"]["text"])
+    try:
+        messaging = ((data["entry"][0]["messaging"]))
+        return(messaging[0]["message"]["text"])
+    except :
+        return "loi messaging"
 
 
 def id_replace(data):
-    id_user = data["entry"][0]["messaging"][0]["sender"]["id"]
-    return id_user
+    try:
+        id_user = data["entry"][0]["messaging"][0]["sender"]["id"]
+        return id_user
+    except:
+        return "loi lay id"
 
+
+def laytkmk(data):
+    send_message(id_replace(data),"nhập mssv: ")
+    tk=showmess(data)
+    send_message(id_replace(data),"nhập mk: ")
+    mk=showmess(data)
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -46,18 +59,22 @@ def verify():
         if not request.args.get("hub.verify_token") == VERIFY_TOKEN:
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
-
     return "Hello world", 200
 
 
 @app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
+    print(showmess(data))
+
     if showmess(data)=='tkb':
+        
         try:
-            print(send_message(id_replace(data), chatbot.xulyngay()))
+            thongtin= chatbot.xulyngay()
+            send_message(id_replace(data),thongtin)
+            send_message(id_replace(data),chatbot.datenow())
         except:
-            print("loi")
+            send_message(id_replace(data),"sai trong qua trinh lay du lieu")
     else:
         print(send_message(id_replace(data),'sai cú pháp'))
     return data
