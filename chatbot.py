@@ -2,13 +2,12 @@ from Ketqua import spider_results, usernamefb, passwordfb
 import os
 import json
 from datetime import datetime
-
+from pytz import timezone
 import subprocess
 
 temp=''
 def datenow():
-    a = datetime.now()
-    print(a)
+    a = datetime.now().astimezone(timezone('Asia/Ho_Chi_Minh'))
     return(a.strftime("%d/%m/%Y"))
 
 
@@ -44,4 +43,3 @@ def xulyngay():
             return thongtin(json_temp[i])
         else:
             continue
-
