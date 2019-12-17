@@ -47,7 +47,6 @@ def id_replace(data):
     except:
         return "loi lay id"
 
-
 def laytkmk(data):
     send_message(id_replace(data),"nhập mssv: ")
     tk=showmess(data)
