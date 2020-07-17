@@ -1,1 +1,1 @@
-Tool lấy thời khóa biểu của sinh viên Trường DNTU
+Tool lấy thời khóa biểu của sinh viên Trường DNTU bằng Python
